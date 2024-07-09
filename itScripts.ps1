@@ -297,7 +297,7 @@ $(Write-Host "    ( 6 ) - Habilitar Windows Update" -ForegroundColor Yellow) +
         4 { registryModify }
         5 { disableWinUpdate }
         6 { enableWinUpdate }
-        "a" { Start-Process msedge.exe "https://github.com/truelanz"; clear; chooseOption}
+        "a" { Start-Process msedge.exe "https://github.com/truelanz/it_app"; clear; chooseOption}
         Default { exit }
     }
     
