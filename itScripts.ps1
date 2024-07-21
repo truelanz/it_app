@@ -146,9 +146,8 @@ function spoolClear {
 }
 
 <# ------------------------------------------------------------------------- #>
-# Erro ao Compartilhar impressora
 
-# Função para modificar registros 
+# Função para modificar registros do Windows
 function registryModify {
 
     Clear-Host
@@ -165,6 +164,8 @@ function registryModify {
          New-ItemProperty -Path $registryPath -Name $nameProperty -Value $valueProperty -PropertyType DWORD -Force | Out-Null
     }
     
+    # Erros ao Compartilhar impressora
+
     $funcName = "CORRIGINDO ERROR 011b"
     loader($funcName)
     # ERROR_011b
@@ -178,6 +179,11 @@ function registryModify {
     regeditModify -registryPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC' -nameProperty "RpcOverTcp" -valueProperty "0"
     regeditModify -registryPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\RPC' -nameProperty "RpcUserNamedPipeProtocol" -valueProperty "1"
     regeditModify -registryPath 'HKLM:\SYSTEM\CurrentControlSet\Control\Print' -nameProperty "RpcAuthnLevelPrivacyEnabled" -valueProperty "0"
+
+    $funcName = "CORRIGINDO ERROR 0bcb"
+    loader($funcName)
+    # ERROR_0709
+    regeditModify -registryPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Printers\PointAndPrint' -nameProperty "RestrictDriverInstallationToAdministrators" -valueProperty "0"
     
     $funcName = "REINICIANDO SPOOLER"
     # Reiniciar Spooler de Impressão
@@ -201,10 +207,10 @@ function disableWinUpdate {
 
     Clear-Host
 
+    #Parando serviço de atualização do windows
     Stop-Service wuauserv -Force
     $funcName = "DESABILITANDO UPDATE"
     loader($funcName)
-    Set-Service wuauserv -StartupType Disabled
     
     function regeditModify {
         param (
@@ -218,8 +224,12 @@ function disableWinUpdate {
         New-ItemProperty -Path $registryPath -Name $nameProperty -Value $valueProperty -PropertyType DWORD -Force | Out-Null
     }
 
+    #Desativando Registro do Windows
     $funcName = "DESABILITANDO REGISTRY"
     loader($funcName)
+    
+    #Setando auto início de serviço como desativado
+    Set-Service wuauserv -StartupType Disabled
     
     regeditModify -registryPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate' -nameProperty "NoAutoUpdate" -valueProperty "1"
     regeditModify -registryPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU' -nameProperty "NoAutoUpdate" -valueProperty "1"
@@ -280,12 +290,12 @@ while ($j -lt $welCome.Length) {
     # Escolhas de funções
     $userEntry = $(Write-Host "`n`n    -------------------------------- `n`n 
     Escolha um numero correspondente a funcao e aperte ENTER: `n`n") +
-$(Write-Host "    ( 1 ) - Limpar cookies e cache do Chrome `n" -ForegroundColor Yellow) +
-$(Write-Host "    ( 2 ) - Limpar arquivos temporarios do Windows `n" -ForegroundColor Yellow) + 
-$(Write-Host "    ( 3 ) - Remover arquivos da Fila de Impressao `n" -ForegroundColor Yellow) + 
-$(Write-Host "    ( 4 ) - Corrigir erro ao compartilhar impressora `n" -ForegroundColor Yellow) + 
-$(Write-Host "    ( 5 ) - Desabilitar Windows Update `n" -ForegroundColor Yellow) +
-$(Write-Host "    ( 6 ) - Habilitar Windows Update" -ForegroundColor Yellow) +
+    $(Write-Host "    ( 1 ) - Limpar cookies e cache do Chrome `n" -ForegroundColor Yellow) +
+    $(Write-Host "    ( 2 ) - Limpar arquivos temporarios do Windows `n" -ForegroundColor Yellow) + 
+    $(Write-Host "    ( 3 ) - Remover arquivos da Fila de Impressao `n" -ForegroundColor Yellow) + 
+    $(Write-Host "    ( 4 ) - Corrigir erro ao compartilhar impressora `n" -ForegroundColor Yellow) + 
+    $(Write-Host "    ( 5 ) - Desabilitar Windows Update `n" -ForegroundColor Yellow) +
+    $(Write-Host "    ( 6 ) - Habilitar Windows Update" -ForegroundColor Yellow) +
     $(Write-Host "`n`n    -------------------------------- `n`n
     Pressione somente " -NoNewline) + $(Write-Host "ENTER" -NoNewline -ForegroundColor Red) + $(Write-Host " para sair do programa `n 
     Pressione a tecla " -NoNewline) + $(Write-Host "A" -NoNewline -ForegroundColor Green) + $(Write-Host " para visitar o github da aplicacao `n`n"; Read-Host)
